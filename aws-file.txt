@@ -1,0 +1,40 @@
+AWS PRODUCTION ENVIRONMENT PROJECT
+Objective:
+This project demonstrates the creation of a Virtual Private Cloud (VPC) in AWS for servers in a production environment. The infrastructure includes autoscaling groups, a bastion host, NAT gateways, an application load balancer, and public/private subnets to ensure security, scalability, and high availability.
+Steps and Implementation:
+1. **VPC Creation**
+ - Logged into AWS Console.
+ - Created a VPC named "AWS-PROD-EXAMPLE" with two public and two private subnets.
+ - Assigned route tables to subnets and attached an internet gateway to the VPC for public subnets.
+2. **EC2 Instance Setup and Autoscaling**
+ - Used an auto-scaling group to create EC2 instances.
+ - Created a launch template with the following configurations:
+ - AMI: Ubuntu
+ - Instance type: t2.micro
+ - Security group: Allowed SSH (port 22) and application traffic (port 8000).
+ - Configured the autoscaling group:
+ - VPC: AWS-PROD-EXAMPLE
+ - Subnets: Two private subnets for resiliency.
+ - Desired instances: 2, Maximum: 3.
+3. **Bastion Host**
+ - Deployed a bastion host in the public subnet to access instances in private subnets securely.
+ - Enabled auto-assign public IP for the bastion host.
+ - Used SCP to transfer the PEM key for private instances to the bastion host:
+ ```
+ scp -i /path/to/bastion-key.pem /path/to/private-key.pem ubuntu@<bastion-public-ip>:/home/ubuntu
+ ```
+ - Accessed private instances through the bastion host using SSH.
+4. **Application Deployment**
+ - Installed a Python application on private EC2 instances.
+ - Application served on port 8000.
+5. **Load Balancer Configuration**
+ - Created an application load balancer in the public subnet.
+ - Configured the security group to allow HTTP (port 80), SSH (port 22), and application traffic (port 8000).
+ - Attached the private instances to the load balancer as target groups.
+ - Verified functionality by accessing the application through the load balancer's public IP.
+6. **NAT Gateways**
+ - Deployed NAT gateways in both availability zones to allow private instances to access the internet.
+Challenges Faced:
+- Difficulty in transferring the PEM file to the bastion host, which required troubleshooting SCP syntax and permissions.
+Conclusion:
+This project demonstrates the ability to create a production-ready AWS environment that is scalable, secure, and highly available. It also highlights my problem-solving skills and understanding of AWS networking and infrastructure components.
